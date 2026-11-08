@@ -1,31 +1,17 @@
-import { Assets as NavigationAssets } from "@react-navigation/elements";
-import { DarkTheme, DefaultTheme } from "@react-navigation/native";
-import { Asset } from "expo-asset";
-import { createURL } from "expo-linking";
-import * as SplashScreen from "expo-splash-screen";
-import { StyleSheet, useColorScheme, View } from "react-native";
-import { Navigation } from "./navigation";
-import MapView from "react-native-maps";
-import * as React from "react";
-
-Asset.loadAsync([
-  ...NavigationAssets,
-  require("./assets/newspaper.png"),
-  require("./assets/bell.png"),
-]);
-
-SplashScreen.preventAutoHideAsync();
-
-const linking = {
-  enabled: "auto" as const,
-  prefixes: [createURL("/")],
-};
+import { StyleSheet, View } from "react-native";
+import MapView, {Marker, Polyline} from "react-native-maps";
+import * as React from "react"
+import MapViewDirections from "react-native-maps-directions";
 
 export function App() {
-
   const [origin, setOrigin] = React.useState({
-    latitude:4.692810,
-    longitude:-74.079451,
+    latitude: 4.69281,
+    longitude: -74.079451,
+  });
+
+  const [destination, setDestination] = React.useState({
+    latitude: 4.686982,
+    longitude: -74.074283,
   });
 
   return (
@@ -38,19 +24,39 @@ export function App() {
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
+      >
+      <Marker
+      draggable
+      onDragEnd={(direction) => setOrigin(direction.nativeEvent.coordinate)}
+      coordinate={origin}
       />
+      <Marker
+      draggable
+      onDragEnd={(direction) => setDestination(direction.nativeEvent.coordinate)}
+      coordinate={destination}
+      />
+      <MapViewDirections
+        origin={origin}
+        destination={destination}
+        apikey={"AIzaSyB4Kv4nNFW4v-koue4wMtpfBzG5SP3IF8w"}
+        strokeWidth={3}
+        strokeColor="hotpink"
+      />
+      </MapView>
+      
     </View>
   );
-
-  
 }
 
 const styles = StyleSheet.create({
-    container: {
-      flex: 1
-    },
-    map: {
-      width: "100%",
-      height: "100%",
-    }
-  }); 
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFF",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  map: {
+    width: "100%",
+    height: "100%",
+  },
+});
